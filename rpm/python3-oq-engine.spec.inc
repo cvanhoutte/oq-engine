@@ -123,6 +123,9 @@ sed -i "s/^__version__[  ]*=.*/__version__ = '%{oqversion}-%{oqrelease}'/g" open
 install -p -m 755 -d %{buildroot}%{_bindir}
 install -p -m 755 -d %{buildroot}%{_oqbindir}
 %{__python3} setup.py install --single-version-externally-managed -O1 --root=%{buildroot} --prefix=%{_oqprefix} --install-scripts=%{_oqbindir}
+for f in $(find %{buildroot} -type f -executable | xargs --no-run-if-empty grep -rlE '^#!/usr/bin/env python3$'); do \
+    sed -i 's|#!#!/usr/bin/env python3|#!/opt/openquake/bin/python3|' $f; \
+done
 ln -sf %{_oqbindir}/oq %{buildroot}%{_bindir}/oq
 # create directories where the files will be located
 mkdir -p %{buildroot}%{_localstatedir}/lib/openquake
